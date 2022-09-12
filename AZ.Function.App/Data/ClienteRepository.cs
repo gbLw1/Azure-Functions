@@ -25,9 +25,9 @@ public class ClienteRepository : IClienteRepository
         return Clientes.Where(c => c.Nome.Contains(nome)).ToList();
     }
 
-    public async Task<List<Cliente>> ObterTodosClientes()
+    public async Task<IEnumerable<Cliente>> ObterTodosClientes()
     {
-        await Task.Delay(1000);
+        await Task.CompletedTask;
         return Clientes;
     }
 

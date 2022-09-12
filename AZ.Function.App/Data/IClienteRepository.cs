@@ -8,7 +8,7 @@ namespace AZ.Function.App.Data;
 public interface IClienteRepository
 {
     List<Cliente> Clientes { get; }
-    Task<List<Cliente>> ObterTodosClientes();
+    Task<IEnumerable<Cliente>> ObterTodosClientes();
     Cliente ObterClientePorId(Guid? id = null);
     IEnumerable<Cliente> ObterClientePorNome(string nome);
     void Adicionar(Cliente cliente);
