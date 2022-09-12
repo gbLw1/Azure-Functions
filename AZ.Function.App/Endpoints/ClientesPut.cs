@@ -34,11 +34,13 @@ namespace AZ.Function.App.Endpoints
 
             var result = _clienteRepository.Atualizar(clienteId, cliente);
 
-            dynamic responseMessage = result is null
-                ? "Não foi possível atualizar o cliente, cheque os dados inseridos e tente novamente."
-                : result;
+            // se retornar null o usuário não foi atualizado.
+            if (result is null)
+            {
+                return new BadRequestObjectResult("Não foi possível atualizar o cliente, cheque os dados inseridos e tente novamente.");
+            }
 
-            return new OkObjectResult(responseMessage);
+            return new OkObjectResult(result);
         }
     }
 }

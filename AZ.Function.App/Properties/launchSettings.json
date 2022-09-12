@@ -1,9 +1,7 @@
 {
   "profiles": {
     "AZ.Function.App": {
-      "commandName": "Project",
-      "commandLineArgs": "--port 7239",
-      "launchBrowser": false
+      "commandName": "Project"
     }
   }
 }

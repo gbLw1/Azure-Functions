@@ -15,9 +15,9 @@ public class ClienteRepository : IClienteRepository
         return Clientes.FirstOrDefault(c => c.Id == id);
     }
 
-    public Cliente ObterClientePorNome(string nome)
+    public IEnumerable<Cliente> ObterClientePorNome(string nome)
     {
-        return Clientes.FirstOrDefault(c => c.Nome.Contains(nome));
+        return Clientes.ToList().Where(c => c.Nome.Contains(nome));
     }
 
     public async Task<List<Cliente>> ObterTodosClientes()

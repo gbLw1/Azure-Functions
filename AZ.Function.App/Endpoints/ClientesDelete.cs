@@ -28,18 +28,14 @@ namespace AZ.Function.App.Endpoints
 
             var cliente = _clienteRepository.ObterClientePorId(clienteId);
 
-            if (cliente is not null)
+            if (cliente is null)
             {
-                _clienteRepository.Remover(cliente);
+                return new BadRequestObjectResult("Não foi possível remover o cliente, cheque o ID informado pois nenhum foi encontrado.");
             }
 
-            var result = _clienteRepository.ObterClientePorId(cliente.Id);
+            _clienteRepository.Remover(cliente);
 
-            string responseMessage = result is not null
-                ? "Não foi possível remover o cliente, cheque o ID informado."
-                : "Cliente removido com sucesso.";
-
-            return new OkObjectResult(responseMessage);
+            return new OkObjectResult("Cliente removido com sucesso.");
         }
     }
 }

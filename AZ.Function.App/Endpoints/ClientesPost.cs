@@ -30,16 +30,22 @@ public class ClientesPost
         string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
         var cliente = JsonConvert.DeserializeObject<Cliente>(requestBody);
 
+        // teste de usuário existente
         var clienteExistente = _clienteRepository.ObterClientePorId(cliente.Id);
 
         if (clienteExistente is not null)
             return new BadRequestObjectResult("Cliente já cadastrado.");
 
+        // cadastra o usuário
         _clienteRepository.Adicionar(cliente);
 
-        string responseMessage = _clienteRepository.ObterClientePorId(cliente.Id) is null
-            ? "Houve um erro ao cadastrar o usuário."
-            : $"Cliente adicionado com sucesso. \nId: [ {cliente.Id} ]";
+        // busca o usuário para testar se foi cadastrado
+        if (_clienteRepository.ObterClientePorId(cliente.Id) is null)
+        {
+            return new BadRequestObjectResult("Houve um erro ao cadastrar o usuário.");
+        }
+
+        string responseMessage = $"Cliente adicionado com sucesso. \nId: [ {cliente.Id} ]";
 
         return new OkObjectResult(responseMessage);
     }

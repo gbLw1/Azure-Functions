@@ -35,23 +35,25 @@ public class ClientesGet
 
                 var cliente = _clienteRepository.ObterClientePorId(clienteId);
 
-                dynamic responseMessage = cliente is null
-                    ? $"Cliente com id: [ {clienteId} ] não encontrado."
-                    : cliente;
+                if (cliente is null)
+                {
+                    return new BadRequestObjectResult("Cliente com id: [ {clienteId} ] não encontrado.");
+                }
 
-                return new OkObjectResult(responseMessage);
+                return new OkObjectResult(cliente);
             }
             else if (queryParams.TryGetValue("nome", out string nome))
             {
                 log.LogCritical("request -> [obter-por-nome]");
 
-                var cliente = _clienteRepository.ObterClientePorNome(nome);
+                var clientes = _clienteRepository.ObterClientePorNome(nome);
 
-                dynamic responseMessage = cliente is null
-                    ? $"Cliente com nome: [ {nome} ] não encontrado."
-                    : cliente;
+                if (clientes is null)
+                {
+                    return new BadRequestObjectResult("Não foi encontrado nenhum cliente com nome: [ {nome} ]");
+                }
 
-                return new OkObjectResult(responseMessage);
+                return new OkObjectResult(clientes);
             }
             else
             {
@@ -59,11 +61,12 @@ public class ClientesGet
 
                 var clientes = await _clienteRepository.ObterTodosClientes();
 
-                dynamic responseMessage = clientes is null
-                    ? "Não há nenhum cliente cadastrado."
-                    : clientes.ToList();
+                if (clientes is null)
+                {
+                    return new BadRequestObjectResult("Não há nenhum cliente cadastrado.");
+                }
 
-                return new OkObjectResult(responseMessage);
+                return new OkObjectResult(clientes.ToList());
             }
         }
         catch (Exception)
