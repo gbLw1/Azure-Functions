@@ -48,9 +48,9 @@ public class ClientesGet
 
                 var clientes = _clienteRepository.ObterClientePorNome(nome);
 
-                if (clientes is null)
+                if (!clientes.Any())
                 {
-                    return new BadRequestObjectResult("Não foi encontrado nenhum cliente com nome: [ {nome} ]");
+                    return new BadRequestObjectResult($"Não foi encontrado nenhum cliente, verifique o nome informado.");
                 }
 
                 return new OkObjectResult(clientes);

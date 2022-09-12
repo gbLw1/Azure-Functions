@@ -17,7 +17,12 @@ public class ClienteRepository : IClienteRepository
 
     public IEnumerable<Cliente> ObterClientePorNome(string nome)
     {
-        return Clientes.ToList().Where(c => c.Nome.Contains(nome));
+        if (string.IsNullOrWhiteSpace(nome))
+        {
+            return Enumerable.Empty<Cliente>();
+        }
+
+        return Clientes.Where(c => c.Nome.Contains(nome)).ToList();
     }
 
     public async Task<List<Cliente>> ObterTodosClientes()
