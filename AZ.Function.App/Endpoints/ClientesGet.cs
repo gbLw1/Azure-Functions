@@ -34,7 +34,7 @@ public class ClientesGet
             {
                 log.LogCritical("request -> [obter-por-id]");
 
-                var cliente = _clienteRepository.ObterClientePorId(clienteId);
+                var cliente = await _clienteRepository.ObterClientePorId(clienteId);
 
                 if (cliente is null)
                 {
@@ -49,7 +49,7 @@ public class ClientesGet
             {
                 log.LogCritical("request -> [obter-por-nome]");
 
-                var clientes = _clienteRepository.ObterClientePorNome(nome);
+                var clientes = await _clienteRepository.ObterClientePorNome(nome);
 
                 if (!clientes.Any())
                 {

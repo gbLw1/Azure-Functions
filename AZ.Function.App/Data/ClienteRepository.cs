@@ -1,4 +1,5 @@
 ﻿using AZ.Function.App.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,49 +9,76 @@ namespace AZ.Function.App.Data;
 
 public class ClienteRepository : IClienteRepository
 {
-    public List<Cliente> Clientes { get; private set; } = new List<Cliente>();
+    //public List<Cliente> Clientes { get; private set; } = new List<Cliente>();
+    private readonly FunctionsDbContext _context;
 
-    public Cliente ObterClientePorId(Guid? id)
+    public ClienteRepository(FunctionsDbContext context)
     {
-        return Clientes.FirstOrDefault(c => c.Id == id);
+        _context = context;
     }
 
-    public IEnumerable<Cliente> ObterClientePorNome(string nome)
+    public async Task<Cliente> ObterClientePorId(Guid? id)
+    {
+        return await _context.Clientes.FirstOrDefaultAsync(c => c.Id == id);
+    }
+
+    public async Task<IEnumerable<Cliente>> ObterClientePorNome(string nome)
     {
         if (string.IsNullOrWhiteSpace(nome))
         {
             return Enumerable.Empty<Cliente>();
         }
 
-        return Clientes.Where(c => c.Nome.Contains(nome)).ToList();
+        return await _context.Clientes.Where(c => c.Nome.Contains(nome)).ToListAsync();
     }
 
     public async Task<IEnumerable<Cliente>> ObterTodosClientes()
     {
-        await Task.CompletedTask;
-        return Clientes;
+        //await Task.CompletedTask;
+        //return Clientes;
+        return await _context.Clientes.ToListAsync();
     }
 
-    public void Adicionar(Cliente cliente)
+    public async Task Adicionar(Cliente cliente)
     {
-        Clientes.Add(cliente);
+        //Clientes.Add(cliente);
+        _context.Clientes.Add(cliente);
+
+        await PersistirDados();
     }
 
-    public Cliente Atualizar(Guid clienteId, Cliente clienteUpdate)
+    public async Task<Cliente> Atualizar(Guid clienteId, Cliente clienteUpdate)
     {
-        var cliente = Clientes.FirstOrDefault(c => c.Id == clienteId);
+        var cliente = _context.Clientes.FirstOrDefault(c => c.Id == clienteId);
 
         if (cliente is not null)
         {
             cliente.Nome = clienteUpdate.Nome;
+
+            _context.Clientes.Update(cliente);
+
+            await PersistirDados();
+
             return cliente;
         }
 
         return null;
     }
 
-    public void Remover(Cliente cliente)
+    public async Task Remover(Cliente cliente)
     {
-        Clientes.Remove(cliente);
+        //Clientes.Remove(cliente);
+        _context.Clientes.Remove(cliente);
+        await PersistirDados();
+    }
+
+    async Task PersistirDados()
+    {
+        var changes = await _context.SaveChangesAsync();
+
+        if (changes == 0)
+        {
+            throw new InvalidOperationException("Erro ao persistir os dados.");
+        }
     }
 }

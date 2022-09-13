@@ -31,13 +31,13 @@ public class ClientesPost
         var cliente = JsonConvert.DeserializeObject<Cliente>(requestBody);
 
         // teste de usuário existente
-        var clienteExistente = _clienteRepository.ObterClientePorId(cliente.Id);
+        var clienteExistente = await _clienteRepository.ObterClientePorId(cliente.Id);
 
         if (clienteExistente is not null)
             return new BadRequestObjectResult("Cliente já cadastrado.");
 
         // cadastra o usuário
-        _clienteRepository.Adicionar(cliente);
+        await _clienteRepository.Adicionar(cliente);
 
         // busca o usuário para testar se foi cadastrado
         if (_clienteRepository.ObterClientePorId(cliente.Id) is null)

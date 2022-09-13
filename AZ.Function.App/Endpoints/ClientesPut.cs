@@ -32,7 +32,7 @@ namespace AZ.Function.App.Endpoints
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             var cliente = JsonConvert.DeserializeObject<Cliente>(requestBody);
 
-            var result = _clienteRepository.Atualizar(clienteId, cliente);
+            var result = await _clienteRepository.Atualizar(clienteId, cliente);
 
             // se retornar null o usuário não foi atualizado.
             if (result is null)

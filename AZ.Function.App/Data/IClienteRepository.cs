@@ -7,12 +7,11 @@ namespace AZ.Function.App.Data;
 
 public interface IClienteRepository
 {
-    List<Cliente> Clientes { get; }
+    //List<Cliente> Clientes { get; }
     Task<IEnumerable<Cliente>> ObterTodosClientes();
-    Cliente ObterClientePorId(Guid? id = null);
-    IEnumerable<Cliente> ObterClientePorNome(string nome);
-    void Adicionar(Cliente cliente);
-    Cliente Atualizar(Guid clienteId, Cliente cliente);
-    void Remover(Cliente cliente);
-
+    Task<Cliente> ObterClientePorId(Guid? id = null);
+    Task<IEnumerable<Cliente>> ObterClientePorNome(string nome);
+    Task Adicionar(Cliente cliente);
+    Task<Cliente> Atualizar(Guid clienteId, Cliente cliente);
+    Task Remover(Cliente cliente);
 }

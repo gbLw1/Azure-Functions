@@ -26,14 +26,14 @@ namespace AZ.Function.App.Endpoints
         {
             log.LogCritical("request -> [clientes-remover]");
 
-            var cliente = _clienteRepository.ObterClientePorId(clienteId);
+            var cliente = await _clienteRepository.ObterClientePorId(clienteId);
 
             if (cliente is null)
             {
                 return new BadRequestObjectResult("Não foi possível remover o cliente, cheque o ID informado pois nenhum foi encontrado.");
             }
 
-            _clienteRepository.Remover(cliente);
+            await _clienteRepository.Remover(cliente);
 
             return new OkObjectResult("Cliente removido com sucesso.");
         }
