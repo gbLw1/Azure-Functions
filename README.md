@@ -1,6 +1,6 @@
-# Azure Functions App
+# Azure Functions HTTP Trigger API
 
-Azure Functions HTTP Trigger API - ToDo list
+Primeiro contato desenvolvendo API com AZF
 
 ---
 
