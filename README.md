@@ -1,4 +1,6 @@
-# AZ.Function.App
+# Azure Functions App
+
+Azure Functions HTTP Trigger API - ToDo list
 
 ---
 
