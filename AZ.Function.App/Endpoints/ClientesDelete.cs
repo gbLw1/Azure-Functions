@@ -30,7 +30,7 @@ namespace AZ.Function.App.Endpoints
 
             if (cliente is null)
             {
-                return new BadRequestObjectResult("Não foi possível remover o cliente, cheque o ID informado pois nenhum foi encontrado.");
+                return new BadRequestObjectResult("NÃ£o foi possÃ­vel remover o cliente, cheque o ID informado pois nenhum foi encontrado.");
             }
 
             await _clienteRepository.Remover(cliente);

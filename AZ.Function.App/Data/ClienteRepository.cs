@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AZ.Function.App.Data;
@@ -32,11 +33,10 @@ public class ClienteRepository : IClienteRepository
         return await _context.Clientes.Where(c => c.Nome.Contains(nome)).ToListAsync();
     }
 
-    public async Task<IEnumerable<Cliente>> ObterTodosClientes()
+    public async Task<IEnumerable<Cliente>> ObterTodosClientes(CancellationToken cancellationToken)
     {
-        //await Task.CompletedTask;
-        //return Clientes;
-        return await _context.Clientes.ToListAsync();
+        await Task.Delay(5000, cancellationToken);
+        return await _context.Clientes.ToListAsync(cancellationToken);
     }
 
     public async Task Adicionar(Cliente cliente)

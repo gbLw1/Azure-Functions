@@ -1,6 +1,7 @@
 ﻿using AZ.Function.App.Models;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AZ.Function.App.Data;
@@ -8,7 +9,7 @@ namespace AZ.Function.App.Data;
 public interface IClienteRepository
 {
     //List<Cliente> Clientes { get; }
-    Task<IEnumerable<Cliente>> ObterTodosClientes();
+    Task<IEnumerable<Cliente>> ObterTodosClientes(CancellationToken cancellationToken);
     Task<Cliente> ObterClientePorId(Guid? id = null);
     Task<IEnumerable<Cliente>> ObterClientePorNome(string nome);
     Task Adicionar(Cliente cliente);

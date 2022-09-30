@@ -6,6 +6,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AZ.Function.App.Endpoints;
@@ -21,8 +22,9 @@ public class ClientesGet
 
     [FunctionName("ClientesGet")]
     public async Task<IActionResult> Run(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "clientes/{clienteId?}")] HttpRequest req,
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "clientes/{clienteId:guid?}")] HttpRequest req,
         ILogger log,
+        CancellationToken cancellationToken,
         Guid? clienteId = null)
     {
         try
@@ -38,7 +40,7 @@ public class ClientesGet
 
                 if (cliente is null)
                 {
-                    return new BadRequestObjectResult($"Cliente com id: [ {clienteId} ] não encontrado.");
+                    return new BadRequestObjectResult($"Cliente com id: [ {clienteId} ] nÃ£o encontrado.");
                 }
 
                 return new OkObjectResult(cliente);
@@ -53,7 +55,7 @@ public class ClientesGet
 
                 if (!clientes.Any())
                 {
-                    return new BadRequestObjectResult("Não foi encontrado nenhum cliente, verifique o nome informado.");
+                    return new BadRequestObjectResult("NÃ£o foi encontrado nenhum cliente, verifique o nome informado.");
                 }
 
                 return new OkObjectResult(clientes);
@@ -64,14 +66,27 @@ public class ClientesGet
             {
                 log.LogCritical("request -> [obter-todos]");
 
-                var clientes = await _clienteRepository.ObterTodosClientes();
-
-                if (!clientes.Any())
+                try
                 {
-                    return new BadRequestObjectResult("Não há nenhum cliente cadastrado.");
-                }
+                    var clientes = await _clienteRepository.ObterTodosClientes(cancellationToken);
 
-                return new OkObjectResult(clientes);
+                    if (req.HttpContext.RequestAborted.IsCancellationRequested)
+                    {
+                        throw new TaskCanceledException();
+                    }
+
+                    if (!clientes.Any())
+                    {
+                        return new BadRequestObjectResult("NÃ£o hÃ¡ nenhum cliente cadastrado.");
+                    }
+
+                    return new OkObjectResult(clientes);
+                }
+                catch (TaskCanceledException)
+                {
+                    log.LogCritical("request -> [Cancelled]");
+                    throw;
+                }
             }
         }
         catch (Exception)

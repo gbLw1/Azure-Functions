@@ -34,10 +34,10 @@ namespace AZ.Function.App.Endpoints
 
             var result = await _clienteRepository.Atualizar(clienteId, cliente);
 
-            // se retornar null o usuário não foi atualizado.
+            // se retornar null o usuï¿½rio nï¿½o foi atualizado.
             if (result is null)
             {
-                return new BadRequestObjectResult("Não foi possível atualizar o cliente, cheque os dados inseridos e tente novamente.");
+                return new BadRequestObjectResult("NÃ£o foi possÃ­vel atualizar o cliente, cheque os dados inseridos e tente novamente.");
             }
 
             return new OkObjectResult(result);
