@@ -1,0 +1,13 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet"
+  },
+  "Host": {
+    "LocalHttpPort": 7217
+  },
+  "ConnectionStrings": {
+    "DefaultConnection": "Data Source=(localdb)\\mssqllocaldb;Initial Catalog=AZF_Tests;Trusted_Connection=True;MultipleActiveResultSets=true"
+  }
+}
