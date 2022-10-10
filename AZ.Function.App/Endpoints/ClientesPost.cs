@@ -7,6 +7,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AZ.Function.App.Endpoints;
@@ -20,27 +21,28 @@ public class ClientesPost
         _clienteRepository = clienteRepository;
     }
 
-    [FunctionName("ClientesPost")]
+    [FunctionName(nameof(ClientesPost))]
     public async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "clientes")] HttpRequest req,
-        ILogger log)
+        ILogger log,
+        CancellationToken cancellationToken)
     {
         log.LogCritical("request -> [clientes-adicionar]");
 
         string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
         var cliente = JsonConvert.DeserializeObject<Cliente>(requestBody);
 
-        // teste de usu�rio existente
-        var clienteExistente = await _clienteRepository.ObterClientePorId(cliente.Id);
+        // teste de usuário existente
+        var clienteExistente = await _clienteRepository.ObterClientePorId(cancellationToken, cliente.Id);
 
         if (clienteExistente is not null)
             return new BadRequestObjectResult("Cliente já cadastrado.");
 
-        // cadastra o usu�rio
+        // cadastra o usuário
         await _clienteRepository.Adicionar(cliente);
 
-        // busca o usu�rio para testar se foi cadastrado
-        if (_clienteRepository.ObterClientePorId(cliente.Id) is null)
+        // busca o usuário para testar se foi cadastrado
+        if (_clienteRepository.ObterClientePorId(cancellationToken, cliente.Id) is null)
         {
             return new BadRequestObjectResult("Houve um erro ao cadastrar o usuário.");
         }

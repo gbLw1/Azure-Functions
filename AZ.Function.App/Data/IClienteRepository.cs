@@ -10,8 +10,8 @@ public interface IClienteRepository
 {
     //List<Cliente> Clientes { get; }
     Task<IEnumerable<Cliente>> ObterTodosClientes(CancellationToken cancellationToken);
-    Task<Cliente> ObterClientePorId(Guid? id = null);
-    Task<IEnumerable<Cliente>> ObterClientePorNome(string nome);
+    Task<Cliente> ObterClientePorId(CancellationToken cancellationToken, Guid? id = null);
+    Task<IEnumerable<Cliente>> ObterClientePorNome(string nome, CancellationToken cancellationToken);
     Task Adicionar(Cliente cliente);
     Task<Cliente> Atualizar(Guid clienteId, Cliente cliente);
     Task Remover(Cliente cliente);

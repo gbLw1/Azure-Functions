@@ -18,19 +18,22 @@ public class ClienteRepository : IClienteRepository
         _context = context;
     }
 
-    public async Task<Cliente> ObterClientePorId(Guid? id)
+    public async Task<Cliente> ObterClientePorId(CancellationToken cancellationToken, Guid? id)
     {
-        return await _context.Clientes.FirstOrDefaultAsync(c => c.Id == id);
+        await Task.Delay(3000, cancellationToken);
+        return await _context.Clientes.FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
     }
 
-    public async Task<IEnumerable<Cliente>> ObterClientePorNome(string nome)
+    public async Task<IEnumerable<Cliente>> ObterClientePorNome(string nome, CancellationToken cancellationToken)
     {
+        await Task.Delay(3000, cancellationToken);
+
         if (string.IsNullOrWhiteSpace(nome))
         {
             return Enumerable.Empty<Cliente>();
         }
 
-        return await _context.Clientes.Where(c => c.Nome.Contains(nome)).ToListAsync();
+        return await _context.Clientes.Where(c => c.Nome.Contains(nome)).ToListAsync(cancellationToken);
     }
 
     public async Task<IEnumerable<Cliente>> ObterTodosClientes(CancellationToken cancellationToken)

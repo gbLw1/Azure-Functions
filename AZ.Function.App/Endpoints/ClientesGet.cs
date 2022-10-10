@@ -20,7 +20,7 @@ public class ClientesGet
         _clienteRepository = clienteRepository;
     }
 
-    [FunctionName("ClientesGet")]
+    [FunctionName(nameof(ClientesGet))]
     public async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "clientes/{clienteId:guid?}")] HttpRequest req,
         ILogger log,
@@ -36,7 +36,15 @@ public class ClientesGet
             {
                 log.LogCritical("request -> [obter-por-id]");
 
-                var cliente = await _clienteRepository.ObterClientePorId(clienteId);
+                var cliente = await _clienteRepository.ObterClientePorId(cancellationToken, clienteId);
+
+                if (req.HttpContext.RequestAborted.IsCancellationRequested)
+                {
+                    log.LogCritical("request -> [Cancelled]");
+                    throw new TaskCanceledException();
+                }
+
+                log.LogCritical("request -> [Executed]");
 
                 if (cliente is null)
                 {
@@ -46,12 +54,20 @@ public class ClientesGet
                 return new OkObjectResult(cliente);
             }
 
-            // -> /clientes?nome=
-            else if (queryParams.TryGetValue("nome", out string nome))
+            // -> /clientes?name=
+            else if (queryParams.TryGetValue("name", out string name))
             {
                 log.LogCritical("request -> [obter-por-nome]");
 
-                var clientes = await _clienteRepository.ObterClientePorNome(nome);
+                var clientes = await _clienteRepository.ObterClientePorNome(name, cancellationToken);
+
+                if (req.HttpContext.RequestAborted.IsCancellationRequested)
+                {
+                    log.LogCritical("request -> [Cancelled]");
+                    throw new TaskCanceledException();
+                }
+
+                log.LogCritical("request -> [Executed]");
 
                 if (!clientes.Any())
                 {
@@ -66,27 +82,23 @@ public class ClientesGet
             {
                 log.LogCritical("request -> [obter-todos]");
 
-                try
-                {
-                    var clientes = await _clienteRepository.ObterTodosClientes(cancellationToken);
+                var clientes = await _clienteRepository.ObterTodosClientes(cancellationToken);
 
-                    if (req.HttpContext.RequestAborted.IsCancellationRequested)
-                    {
-                        throw new TaskCanceledException();
-                    }
-
-                    if (!clientes.Any())
-                    {
-                        return new BadRequestObjectResult("Não há nenhum cliente cadastrado.");
-                    }
-
-                    return new OkObjectResult(clientes);
-                }
-                catch (TaskCanceledException)
+                if (req.HttpContext.RequestAborted.IsCancellationRequested)
                 {
                     log.LogCritical("request -> [Cancelled]");
-                    throw;
+                    throw new TaskCanceledException();
                 }
+
+                log.LogCritical("request -> [Executed]");
+
+                if (!clientes.Any())
+                {
+                    return new BadRequestObjectResult("Não há nenhum cliente cadastrado.");
+                }
+
+                return new OkObjectResult(clientes);
+
             }
         }
         catch (Exception)
